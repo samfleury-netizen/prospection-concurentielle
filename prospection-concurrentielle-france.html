@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prospection Concurrentielle France — Pipeline CSE</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0b0e;
+  --surface: #13151a;
+  --surface2: #1c1f27;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0f1f3;
+  --muted: #6b7280;
+  --muted2: #9ca3af;
+
+  --blue: #3b82f6;
+  --blue-bg: rgba(59,130,246,0.12);
+  --blue-border: rgba(59,130,246,0.3);
+
+  --purple: #a78bfa;
+  --purple-bg: rgba(167,139,250,0.1);
+  --purple-border: rgba(167,139,250,0.28);
+
+  --teal: #2dd4bf;
+  --teal-bg: rgba(45,212,191,0.1);
+  --teal-border: rgba(45,212,191,0.28);
+
+  --orange: #fb923c;
+  --orange-bg: rgba(251,146,60,0.1);
+  --orange-border: rgba(251,146,60,0.28);
+
+  --green: #4ade80;
+  --green-bg: rgba(74,222,128,0.1);
+  --green-border: rgba(74,222,128,0.28);
+
+  --amber: #fbbf24;
+  --amber-bg: rgba(251,191,36,0.1);
+  --amber-border: rgba(251,191,36,0.28);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── Header ── */
+.header {
+  padding: 48px 48px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.header-left {}
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.title {
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text);
+}
+.title span { color: var(--blue); }
+.subtitle {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--muted2);
+  font-weight: 400;
+  max-width: 520px;
+  line-height: 1.6;
+}
+.badge-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+  color: var(--muted2);
+  background: var(--surface);
+}
+.badge.pulse {
+  border-color: var(--green-border);
+  color: var(--green);
+  background: var(--green-bg);
+  position: relative;
+}
+.badge.pulse::before {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  margin-right: 6px;
+  animation: blink 2s ease-in-out infinite;
+  vertical-align: middle;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── Main layout ── */
+.main {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 160px);
+}
+
+/* ── Sidebar nav ── */
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 32px 0;
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 160px);
+  overflow-y: auto;
+}
+.nav-section {
+  padding: 0 24px;
+  margin-bottom: 24px;
+}
+.nav-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted2);
+  text-decoration: none;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--surface2); color: var(--text); }
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.nav-vol {
+  margin-left: auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* ── Content ── */
+.content {
+  padding: 40px 48px;
+  overflow-y: auto;
+}
+
+/* ── Step block ── */
+.step {
+  margin-bottom: 56px;
+  scroll-margin-top: 24px;
+}
+.step-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.step-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-title-block {}
+.step-name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.step-desc {
+  font-size: 13px;
+  color: var(--muted2);
+  margin-top: 4px;
+  font-weight: 400;
+}
+.step-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 24px;
+  border-left: 1px solid var(--border);
+  margin-left: 20px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--border2); }
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.card-body {
+  font-size: 12px;
+  color: var(--muted2);
+  font-weight: 400;
+  line-height: 1.6;
+}
+.card.accent-blue { border-left: 2px solid var(--blue); background: var(--blue-bg); }
+.card.accent-blue .card-title { color: #93c5fd; }
+.card.accent-purple { border-left: 2px solid var(--purple); background: var(--purple-bg); }
+.card.accent-purple .card-title { color: var(--purple); }
+.card.accent-teal { border-left: 2px solid var(--teal); background: var(--teal-bg); }
+.card.accent-teal .card-title { color: var(--teal); }
+.card.accent-orange { border-left: 2px solid var(--orange); background: var(--orange-bg); }
+.card.accent-orange .card-title { color: var(--orange); }
+.card.accent-green { border-left: 2px solid var(--green); background: var(--green-bg); }
+.card.accent-green .card-title { color: var(--green); }
+.card.accent-amber { border-left: 2px solid var(--amber); background: var(--amber-bg); }
+.card.accent-amber .card-title { color: var(--amber); }
+
+.card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.card-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+/* arrow connector */
+.connector {
+  display: flex;
+  align-items: center;
+  padding: 4px 0 4px 0;
+  gap: 6px;
+}
+.connector-line {
+  width: 1px;
+  height: 20px;
+  background: var(--border2);
+  margin-left: 20px;
+}
+.connector-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-left: 28px;
+  letter-spacing: 0.05em;
+}
+
+/* keywords */
+.kw-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+.kw {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: rgba(59,130,246,0.15);
+  border: 1px solid rgba(59,130,246,0.25);
+  color: #93c5fd;
+  cursor: default;
+  transition: background 0.15s;
+}
+.kw:hover { background: rgba(59,130,246,0.28); }
+
+/* volume bar */
+.vol-bar {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+.vol-label { font-size: 12px; color: var(--muted2); }
+.vol-num { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; }
+.vol-arrow { color: var(--muted); font-size: 12px; }
+.vol-track {
+  flex: 1;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  min-width: 80px;
+}
+.vol-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* sequence timeline */
+.seq { display: flex; gap: 0; margin-top: 6px; }
+.seq-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 6px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  position: relative;
+}
+.seq-item:first-child { border-radius: 6px 0 0 6px; }
+.seq-item:last-child { border-radius: 0 6px 6px 0; }
+.seq-item + .seq-item { border-left: none; }
+.seq-day { font-family: 'DM Mono', monospace; font-weight: 500; font-size: 12px; margin-bottom: 3px; }
+.seq-act { font-size: 11px; color: var(--muted2); }
+
+/* objective */
+.objective {
+  background: linear-gradient(135deg, rgba(74,222,128,0.06) 0%, rgba(59,130,246,0.06) 100%);
+  border: 1px solid rgba(74,222,128,0.2);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-top: 48px;
+  position: relative;
+  overflow: hidden;
+}
+.objective::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(74,222,128,0.4), rgba(59,130,246,0.4), transparent);
+}
+.obj-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--green);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.obj-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+.obj-body {
+  font-size: 13px;
+  color: var(--muted2);
+  line-height: 1.75;
+  font-weight: 400;
+  max-width: 680px;
+}
+.obj-quote {
+  margin: 16px 0;
+  padding: 12px 20px;
+  border-left: 2px solid var(--green);
+  background: rgba(74,222,128,0.06);
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  font-style: italic;
+  color: #d1fae5;
+  line-height: 1.6;
+}
+.obj-footer {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.obj-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  border: 1px solid;
+}
+.obj-tag.green { border-color: var(--green-border); color: var(--green); background: var(--green-bg); }
+.obj-tag.blue  { border-color: var(--blue-border);  color: #93c5fd; background: var(--blue-bg); }
+
+/* dashed loop */
+.loop-card {
+  border-style: dashed !important;
+}
+
+/* flow arrow between steps */
+.step-connector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 8px 20px;
+  margin-bottom: 8px;
+}
+.step-connector-line {
+  width: 1px;
+  height: 28px;
+  background: var(--border2);
+}
+.step-connector-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-left">
+    <div class="eyebrow">Documentation technique · Pipeline B2B</div>
+    <div class="title">Prospection<br><span>Concurrentielle France</span></div>
+    <div class="subtitle">Détection automatique d'entreprises utilisant une plateforme CSE concurrente via les offres d'emploi France Travail — du signal d'achat au contact HubSpot.</div>
+    <div class="badge-row">
+      <span class="badge pulse">Cycle mensuel automatique</span>
+      <span class="badge">77 mots-clés</span>
+      <span class="badge">95 départements</span>
+      <span class="badge">~200 leads/mois</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Étapes du pipeline</div>
+      <a class="nav-item active" href="#step1" onclick="setActive(this)">
+        <span class="nav-dot" style="background:#3b82f6"></span>
+        Siphonnage France Travail
+        <span class="nav-vol">~600</span>
+      </a>
+      <a class="nav-item" href="#step2" onclick="setActive(this)">
+        <span class="nav-dot" style="background:#a78bfa"></span>
+        Nettoyage BDD
+        <span class="nav-vol">~400</span>
+      </a>
+      <a class="nav-item" href="#step3" onclick="setActive(this)">
+        <span class="nav-dot" style="background:#2dd4bf"></span>
+        Enrichissement SIRET
+        <span class="nav-vol">~400</span>
+      </a>
+      <a class="nav-item" href="#step4" onclick="setActive(this)">
+        <span class="nav-dot" style="background:#fb923c"></span>
+        Enrichissement contact
+        <span class="nav-vol">~200</span>
+      </a>
+      <a class="nav-item" href="#step5" onclick="setActive(this)">
+        <span class="nav-dot" style="background:#4ade80"></span>
+        Import HubSpot
+        <span class="nav-vol">~200</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Résultat</div>
+      <a class="nav-item" href="#objectif" onclick="setActive(this)">
+        <span class="nav-dot" style="background:#fbbf24"></span>
+        Objectif final
+      </a>
+    </div>
+    <div class="nav-section" style="margin-top:auto; padding-top:24px; border-top:1px solid var(--border);">
+      <div style="font-size:11px; color:var(--muted); line-height:1.6;">
+        <span style="font-family:'DM Mono',monospace;">Fréquence</span><br>
+        Tous les 30 jours<br><br>
+        <span style="font-family:'DM Mono',monospace;">Sources</span><br>
+        API France Travail v2<br>
+        API SIRENE (INSEE)<br>
+        Société Info<br>
+        HubSpot CRM
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- ── ÉTAPE 1 ── -->
+    <section class="step" id="step1">
+      <div class="step-head">
+        <div class="step-num" style="background:var(--blue-bg);color:#93c5fd;border:1px solid var(--blue-border)">01</div>
+        <div class="step-title-block">
+          <div class="step-name" style="color:#93c5fd">Siphonnage France Travail</div>
+          <div class="step-desc">On scanne toutes les offres d'emploi françaises pour détecter les entreprises qui mentionnent une plateforme CSE concurrente dans leur annonce.</div>
+        </div>
+      </div>
+      <div class="step-cards">
+
+        <div class="card accent-blue">
+          <div class="card-title">Source : API France Travail v2</div>
+          <div class="card-body">Scan jour par jour sur 30 jours · 95 départements français · pagination complète (max 3 000 offres/page) · fenêtre minCreationDate / maxCreationDate</div>
+        </div>
+
+        <div class="connector-label">↓ fetch description complète</div>
+
+        <div class="card accent-blue">
+          <div class="card-title">Récupération description complète (parallèle)</div>
+          <div class="card-body">Endpoint <code style="font-family:'DM Mono',monospace;font-size:11px">/v2/offres/{id}</code> · 10 requêtes simultanées · pour ne pas rater les mots-clés en fin d'annonce</div>
+        </div>
+
+        <div class="connector-label">↓ filtrage</div>
+
+        <div class="card accent-blue">
+          <div class="card-title">Filtre regex — 77 mots-clés surveillés</div>
+          <div class="card-body">Frontières de mots <code style="font-family:'DM Mono',monospace;font-size:10px">(?&lt;![a-zA-ZÀ-ÿ0-9])keyword(?![a-zA-ZÀ-ÿ0-9])</code> · appliqué sur : nom entreprise + intitulé + description complète</div>
+          <div class="kw-wrap">
+            <span class="kw">Espace CSE</span><span class="kw">Magic Evasion</span><span class="kw">Tempeos</span><span class="kw">Cezam</span><span class="kw">Wengel</span><span class="kw">Dreamservices</span><span class="kw">Vega CE</span><span class="kw">Pass CE</span><span class="kw">Toutateam</span><span class="kw">Horizon CE</span><span class="kw">Proxi CE</span><span class="kw">Cleraffaires</span><span class="kw">Opteam</span><span class="kw">Reducbox</span><span class="kw">Cos Med</span><span class="kw">Pass Privilèges</span><span class="kw">Atout Loisirs</span><span class="kw">Loisir Soleil</span><span class="kw">Accès Culture</span><span class="kw">CE+</span><span class="kw">Inter C.E.A</span><span class="kw">Facilis</span><span class="kw">Loisirs et Services</span><span class="kw">Pouvoir Plus</span><span class="kw">May</span><span class="kw">UniCE</span><span class="kw">Breizh CE</span><span class="kw">Trip Normand</span><span class="kw">Reduc CE</span><span class="kw">Dynabuy</span><span class="kw">Mucho</span><span class="kw">Bonuus</span><span class="kw">Quantis</span><span class="kw">Place des salariés</span><span class="kw">Yeati</span><span class="kw">Amhappy</span><span class="kw">Club Employés</span><span class="kw">Edenred</span><span class="kw">Proweb</span><span class="kw">Hello CSE</span><span class="kw">Hellfrich</span><span class="kw">Advango</span><span class="kw">Swile</span><span class="kw">Comitéo</span><span class="kw">Up Coop</span><span class="kw">Kalidéa</span><span class="kw">Happypal</span><span class="kw">Glady</span><span class="kw">Leeto</span><span class="kw">Couleur CE</span><span class="kw">Illicado</span><span class="kw">Delta CE</span><span class="kw">Swizy</span><span class="kw">Fizzlee</span><span class="kw">Henley IT</span><span class="kw">Passtime</span><span class="kw">Ekipéa</span><span class="kw">Pozeo</span><span class="kw">Emiles</span><span class="kw">Wiismile</span><span class="kw">CE Externalisé</span><span class="kw">CSE Externalisé</span><span class="kw">Comité d'entreprise externalisé</span><span class="kw">Plateforme d'avantages</span><span class="kw">Plateforme avantages salariés</span><span class="kw">Portail d'avantages</span><span class="kw">Billetterie CSE</span><span class="kw">Bimpli</span><span class="kw">Apetiz</span><span class="kw">Benify</span><span class="kw">Worklife</span><span class="kw">Cobee</span><span class="kw">Wedoogift</span><span class="kw">Meyclub</span><span class="kw">Open CSE</span><span class="kw">Sodexo</span><span class="kw">Natixis Intertitres</span>
+          </div>
+        </div>
+
+        <div class="connector-label">↓ déduplication</div>
+
+        <div class="card accent-blue">
+          <div class="card-title">Déduplication par ID offre + par entreprise</div>
+          <div class="card-body">Comparaison avec l'historique complet des cycles précédents · sauvegarde intermédiaire tous les 5 départements (database.json)</div>
+        </div>
+
+        <div class="vol-bar">
+          <div>
+            <div class="vol-label">Output</div>
+            <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px">Entreprise · Effectif · Poste · Dept · Mot-clé · Lien</div>
+          </div>
+          <div class="vol-track"><div class="vol-fill" style="width:100%;background:var(--blue)"></div></div>
+          <div>
+            <div class="vol-num" style="color:#93c5fd">~3 000 offres</div>
+            <div class="vol-label">→ ~600 entreprises uniques</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── ÉTAPE 2 ── -->
+    <section class="step" id="step2">
+      <div class="step-head">
+        <div class="step-num" style="background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border)">02</div>
+        <div class="step-title-block">
+          <div class="step-name" style="color:var(--purple)">Nettoyage BDD</div>
+          <div class="step-desc">On nettoie la liste pour ne garder que des prospects réels, identifiables et jamais contactés.</div>
+        </div>
+      </div>
+      <div class="step-cards">
+
+        <div class="card accent-purple">
+          <div class="card-title">Supprimer les lignes "Non renseigné"</div>
+          <div class="card-body">Entreprises anonymes non identifiables → exclues</div>
+        </div>
+        <div class="connector-label">↓</div>
+        <div class="card accent-purple">
+          <div class="card-title">Dédupliquer par nom d'entreprise</div>
+          <div class="card-body">1 ligne par entreprise · conserver le mot-clé le plus pertinent</div>
+        </div>
+        <div class="connector-label">↓</div>
+        <div class="card accent-purple">
+          <div class="card-title">Supprimer coquilles + agences d'intérim</div>
+          <div class="card-body">Noms trop courts, caractères spéciaux · Manpower, Randstad, Proman, CRIT, Samsic, Adéquat, Iziwork, Aquila RH, Temporis…</div>
+        </div>
+        <div class="connector-label">↓</div>
+        <div class="card accent-purple loop-card">
+          <div class="card-title">↻ Déduplication inter-cycles (12 mois glissants)</div>
+          <div class="card-body">Comparaison avec l'historique · exclure toute entreprise déjà prospectée sur les 12 derniers mois · garantit des leads toujours frais</div>
+        </div>
+
+        <div class="vol-bar">
+          <div><div class="vol-label">Output</div></div>
+          <div class="vol-track"><div class="vol-fill" style="width:67%;background:var(--purple)"></div></div>
+          <div>
+            <div class="vol-num" style="color:var(--purple)">~400 entreprises</div>
+            <div class="vol-label">après nettoyage complet</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── ÉTAPE 3 ── -->
+    <section class="step" id="step3">
+      <div class="step-head">
+        <div class="step-num" style="background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-border)">03</div>
+        <div class="step-title-block">
+          <div class="step-name" style="color:var(--teal)">Enrichissement SIRET + Effectifs</div>
+          <div class="step-desc">On récupère le SIRET via l'API SIRENE puis on qualifie la taille de l'entreprise pour segmenter les leads.</div>
+        </div>
+      </div>
+      <div class="step-cards">
+
+        <div class="card accent-teal">
+          <div class="card-title">API SIRENE (INSEE) — Google Apps Script</div>
+          <div class="card-body">Input : nom entreprise + département · Output : SIRET · taux de réussite ~100%</div>
+        </div>
+        <div class="connector-label">↓ récupération effectifs</div>
+        <div class="card accent-teal">
+          <div class="card-title">Tranche effectifs officielle INSEE</div>
+          <div class="card-body">Via SIRET · taux de réussite ~70%</div>
+        </div>
+        <div class="connector-label">↓ pour les 30% restants</div>
+        <div class="card accent-amber">
+          <div class="card-title">Estimation IA — Gemini Flash Lite</div>
+          <div class="card-body">Question binaire : "50+ salariés — OUI / NON / INCONNU" · couvre les entreprises absentes de la tranche INSEE</div>
+        </div>
+        <div class="connector-label">↓ segmentation (tous les leads sont conservés)</div>
+
+        <div class="card-row">
+          <div class="card accent-amber">
+            <div class="card-title">Entreprises &lt; 50 salariés</div>
+            <div class="card-body">Flaggées · conservées dans la base · incluses dans la prospection</div>
+          </div>
+          <div class="card accent-teal">
+            <div class="card-title">Entreprises ≥ 50 salariés</div>
+            <div class="card-body">Flaggées · conservées dans la base · obligation légale d'avoir un CSE</div>
+          </div>
+        </div>
+
+        <div class="vol-bar">
+          <div><div class="vol-label">Output</div></div>
+          <div class="vol-track"><div class="vol-fill" style="width:67%;background:var(--teal)"></div></div>
+          <div>
+            <div class="vol-num" style="color:var(--teal)">~400 entreprises</div>
+            <div class="vol-label">toutes enrichies + segmentées</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── ÉTAPE 4 ── -->
+    <section class="step" id="step4">
+      <div class="step-head">
+        <div class="step-num" style="background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)">04</div>
+        <div class="step-title-block">
+          <div class="step-name" style="color:var(--orange)">Enrichissement contact — Société Info</div>
+          <div class="step-desc">On envoie la BDD dans Société Info pour enrichissement : téléphone, email et nom du décisionnaire.</div>
+        </div>
+      </div>
+      <div class="step-cards">
+
+        <div class="card accent-orange">
+          <div class="card-title">Export vers Société Info</div>
+          <div class="card-body">Envoi de la BDD (SIRET + nom entreprise) · enrichissement automatique · output : téléphone direct · email · nom dirigeant / DRH</div>
+        </div>
+        <div class="connector-label">↓ priorisation</div>
+        <div class="card accent-orange">
+          <div class="card-title">Priorisation des contacts décisionnaires</div>
+          <div class="card-body">Ordre de priorité : DRH → DAF → Dirigeant → Responsable RH</div>
+        </div>
+
+        <div class="vol-bar">
+          <div><div class="vol-label">Output</div></div>
+          <div class="vol-track"><div class="vol-fill" style="width:50%;background:var(--orange)"></div></div>
+          <div>
+            <div class="vol-num" style="color:var(--orange)">~200 contacts</div>
+            <div class="vol-label">avec coordonnées · prêts à contacter</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── ÉTAPE 5 ── -->
+    <section class="step" id="step5">
+      <div class="step-head">
+        <div class="step-num" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)">05</div>
+        <div class="step-title-block">
+          <div class="step-name" style="color:var(--green)">Import HubSpot + Séquence commerciale</div>
+          <div class="step-desc">On injecte les leads dans le CRM et on déclenche la séquence de prospection ciblée.</div>
+        </div>
+      </div>
+      <div class="step-cards">
+
+        <div class="card accent-green">
+          <div class="card-title">Import CSV HubSpot</div>
+          <div class="card-body">Tag obligatoire : <code style="font-family:'DM Mono',monospace;font-size:10px">Source: CSE-Signal-[MOIS-ANNEE]</code> · <code style="font-family:'DM Mono',monospace;font-size:10px">Plateforme: [Swile / Edenred / …]</code> · dédoublonnage automatique sur champ SIRET</div>
+        </div>
+        <div class="connector-label">↓ workflow automatique</div>
+        <div class="card-row">
+          <div class="card accent-green">
+            <div class="card-title">Réattribution sales</div>
+            <div class="card-body">Selon région / département</div>
+          </div>
+          <div class="card accent-green">
+            <div class="card-title">Vérification doublon</div>
+            <div class="card-body">Sur champ SIRET · évite tout re-import d'une même entreprise</div>
+          </div>
+        </div>
+        <div class="connector-label">↓ séquence d'approche</div>
+
+        <div class="seq">
+          <div class="seq-item" style="background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.25)">
+            <div class="seq-day" style="color:var(--green)">J0</div>
+            <div class="seq-act">Email d'accroche</div>
+          </div>
+          <div class="seq-item">
+            <div class="seq-day" style="color:var(--muted2)">J+7</div>
+            <div class="seq-act">Relance email</div>
+          </div>
+          <div class="seq-item">
+            <div class="seq-day" style="color:var(--muted2)">J+14</div>
+            <div class="seq-act">Appel téléphonique</div>
+          </div>
+        </div>
+
+        <div class="vol-bar">
+          <div><div class="vol-label">Output</div></div>
+          <div class="vol-track"><div class="vol-fill" style="width:33%;background:var(--green)"></div></div>
+          <div>
+            <div class="vol-num" style="color:var(--green)">~200 leads</div>
+            <div class="vol-label">injectés dans HubSpot · séquence active</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── OBJECTIF ── -->
+    <div class="objective" id="objectif">
+      <div class="obj-label">Objectif final</div>
+      <div class="obj-title">Contacter au bon moment, avec le bon signal</div>
+      <div class="obj-body">
+        L'ensemble du pipeline converge vers un seul déclencheur commercial : l'entreprise utilise déjà une plateforme CSE concurrente, elle connaît les enjeux, et une offre d'emploi récente prouve que la plateforme est activement en place. C'est le moment idéal pour se positionner avant le renouvellement de contrat.
+      </div>
+      <div class="obj-quote">
+        "Je sais que vous travaillez avec [Swile / Edenred / HelloCSE…]. Quand se termine votre contrat ? On aimerait faire un comparatif avec vous."
+      </div>
+      <div class="obj-body">
+        L'approche n'est pas une prospection à froid — c'est une approche sur signal d'achat qualifié. Le prospect est déjà client d'un concurrent, ce qui valide son besoin et sa maturité. L'objectif est de se positionner comme alternative sérieuse au bon moment, pour initier un comparatif et entrer dans le cycle de renouvellement.
+        <br><br>
+        Ce pipeline est entièrement reproductible : chaque mois, une nouvelle vague de leads frais entre dans HubSpot, sans duplication avec les cycles précédents, avec le bon contact identifié et le message ciblé sur la plateforme concurrente détectée. Une machine de prospection B2B scalable et autonome.
+      </div>
+      <div class="obj-footer">
+        <span class="obj-tag green">↻ Cycle mensuel automatique</span>
+        <span class="obj-tag blue">Signal d'achat qualifié</span>
+        <span class="obj-tag blue">77 concurrents surveillés</span>
+        <span class="obj-tag green">~200 leads frais / mois</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function setActive(el) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      document.querySelectorAll('.nav-item').forEach(i => {
+        i.classList.toggle('active', i.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.step, #objectif').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
